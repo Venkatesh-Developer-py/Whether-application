@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather App⛅</title>
+<link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/1116/1116453.png">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364,#1e3c72);
+background-size:400% 400%;
+animation:gradient 8s ease infinite;
+padding:20px;
+color:#fff;
+}
+
+@keyframes gradient{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+
+/* TOP BANNER */
+.banner{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+background:linear-gradient(90deg,#00c6ff,#0072ff);
+padding:8px;
+text-align:center;
+font-size:14px;
+font-weight:600;
+z-index:1000;
+}
+
+/* CARD */
+.weather-card{
+width:100%;
+max-width:380px;
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(25px);
+padding:30px 25px;
+border-radius:25px;
+text-align:center;
+box-shadow:0 20px 40px rgba(0,0,0,0.3);
+margin-top:60px;
+}
+
+/* TITLE */
+.weather-card h1{
+font-size:28px;
+margin-bottom:25px;
+}
+
+/* FORM */
+form{
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+input{
+padding:16px;
+border:none;
+border-radius:15px;
+outline:none;
+background:rgba(255,255,255,0.8);
+font-size:15px;
+color:#000;
+}
+
+button{
+padding:16px;
+border:none;
+border-radius:15px;
+background:linear-gradient(135deg,#00c6ff,#0072ff);
+color:#fff;
+font-size:15px;
+font-weight:600;
+cursor:pointer;
+transition:.3s;
+}
+
+button:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 20px rgba(0,198,255,.4);
+}
+
+/* RESULT BOX */
+.weather-info{
+margin-top:25px;
+background:rgba(255,255,255,0.12);
+padding:25px;
+border-radius:20px;
+}
+
+.city{
+font-size:22px;
+font-weight:600;
+margin-bottom:10px;
+}
+
+.temp{
+font-size:60px;
+font-weight:800;
+margin:10px 0;
+}
+
+.desc{
+font-size:18px;
+margin-bottom:20px;
+}
+
+.details{
+display:flex;
+gap:10px;
+}
+
+.detail{
+flex:1;
+background:rgba(255,255,255,0.15);
+padding:15px;
+border-radius:12px;
+}
+
+.error{
+background:#ff4d4d;
+padding:15px;
+border-radius:10px;
+margin-top:20px;
+}
+.ticker-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.ticker-label {
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.marquee {
+  display: flex;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+}
+
+.marquee-content {
+  display: flex;
+  animation: marquee-scroll 20s linear infinite;
+  padding: 0 10px;
+}
+
+.marquee:hover .marquee-content,
+@media (prefers-reduced-motion: reduce) {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+}
+</style>
+</head>
+
+<body>
+<!-- TOP BANNER WITH TICKER -->
+
+<div class="banner">
+  <div class="ticker-container">
+    <span class="ticker-label">📢 Latest Instructions:</span>
+    <div class="marquee">
+      <div class="marquee-content">
+        Stay hydrated in high humidity | Wear sunscreen if UV index >6 | Check wind for outdoor plans | 
+      </div>
+      <div class="marquee-content"> <!-- Duplicate for seamless loop -->
+        Stay hydrated in high humidity | Wear sunscreen if UV index >6 | Check wind for outdoor plans | 
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="weather-card">
+
+<h1>🌦️ Weather App</h1>
+
+<form method="post" action="{% url 'get_weather' %}">
+{% csrf_token %}
+<input type="text" name="city" placeholder="Enter city name (London, Chennai)" required>
+<button type="submit">GET WEATHER</button>
+</form>
+
+{% if weather %}
+<div class="weather-info">
+<div class="city">{{ weather.city }}, {{ weather.country }}</div>
+<div class="temp">{{ weather.temperature }}°C</div>
+<div class="desc">🌤️ {{ weather.condition }} - {{ weather.description }}</div>
+
+<div class="details">
+<div class="detail">
+Humidity <br><b>{{ weather.humidity }}%</b>
+</div>
+<div class="detail">
+Wind <br><b>{{ weather.wind }} m/s</b>
+</div>
+</div>
+
+</div>
+{% endif %}
+
+{% if error %}
+<div class="error">
+❌ {{ error }}
+</div>
+{% endif %}
+
+</div>
+
+</body>
+</html>
